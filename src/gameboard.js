@@ -78,13 +78,13 @@ export class Gameboard {
     if (length === 4) {
       return "battleship";
     }
-    if (length === 3 && !this.cruiser) {
+    if (length === 3 && !this.fleet.cruiser) {
       return "cruiser";
     }
     if (length === 3) {
       return "submarine";
     }
-    if (length === 3) {
+    if (length === 2) {
       return "destroyer";
     }
   }
@@ -94,6 +94,7 @@ export class Gameboard {
     if (!shipCoords) {
       return false;
     }
+
     this.fleet[this._getShipName(length)] = {
       coords: shipCoords,
       ship: new Ship(length)
@@ -145,4 +146,3 @@ board.placeShip(5, [7, 6]);
 board.changeDirection();
 board.placeShip(2, [0, 0]);
 board.placeShip(3, [1, 4]);
-

@@ -6,7 +6,9 @@
   "scripts": {
     "build": "webpack",
     "test": "jest",
-    "watch": "jest --watch *test.js"
+    "watch": "run-p webpack-watch jest-watch",
+    "webpack-watch": "webpack --watch",
+    "jest-watch": "jest --watch *test.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,6 +16,7 @@
     "@babel/core": "^7.22.1",
     "@babel/preset-env": "^7.22.2",
     "babel-jest": "^29.5.0",
+    "css-loader": "^6.8.1",
     "jest": "^29.5.0",
     "webpack-cli": "^5.1.1"
   },

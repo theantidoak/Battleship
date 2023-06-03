@@ -20,7 +20,7 @@ export class Gameboard {
   _createBoard() {
     let coords = [];
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 9; i >= 0; i--) {
       for (let j = 0; j < 10; j++) {
         coords.push([i, j]);
       }
@@ -124,6 +124,7 @@ export class Gameboard {
 
   receiveAttack(newCoords) {
     const exists = this._checkIfExists(this.occupiedCoords, newCoords);
+    
     if (exists) {
       this.gridHits.push(newCoords);
       this._findHitShip(newCoords);

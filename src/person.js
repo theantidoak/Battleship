@@ -1,20 +1,21 @@
-export class Person {
-  constructor() {
-    this.turn = false;
+import { Gameboard } from "./gameboard";
+
+export class Player {
+  constructor(name, turn) {
+    this.name = name;
+    this.turn = turn;
     this.moves = [];
     this.hits = [];
     this.misses = [];
     this.sunkShips = [];
+    this.board = new Gameboard();
   }
 
   attackEnemy(coords) {
-    const exists = this.moves.some((coords) => move[0] === coords[0] && move[1] === coords[1]);
+    const exists = this.moves.some((move) => move[0] === coords[0] && move[1] === coords[1]);
     if (!exists) {
       this.moves.push(coords);
-      return coords;
     }
-
-    return false;
   }
 
   changeTurn() {

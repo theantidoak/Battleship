@@ -1,0 +1,57 @@
+.title {
+  width: fit-content;
+  margin: 2rem auto 3rem;
+}
+
+.boards {
+  display: flex;
+  gap: 4rem;
+  padding: 0 3rem;
+  justify-content: center;
+}
+
+.battleship-board {
+  display: grid;
+  grid-template-columns: repeat(10, 50px);
+  grid-template-rows: repeat(10, 50px);
+  border: 1px solid black;
+}
+
+.battleship-square {
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+.ships {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-end;
+  width: fit-content;
+  margin: 1rem auto;
+}
+
+.ship {
+  background-color: green;
+  display: grid;
+  grid-template-columns: repeat(1, 50px);
+  width: 50px;
+  cursor: pointer;
+}
+
+/* .ship.carrier {
+  height: calc(46px * 5);
+}
+.ship.battleship {
+  height: calc(46px * 4);
+}
+.ship.cruiser {
+  height: calc(46px * 3);
+}
+.ship.submarine {
+  height: calc(46px * 3);
+}
+.ship.destroyer {
+  height: calc(46px * 2);
+} */

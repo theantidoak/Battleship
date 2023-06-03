@@ -1,5 +1,5 @@
 import { Player } from "../person";
-import { dragstart_handler, drop_handler, dragover_handler } from "./dragAndDrop";
+import { dragstart_handler, drop_handler, dragover_handler, dragenter_handler } from "./dragAndDrop";
 
 const player1 = new Player('P1', true);
 const player2 = new Player('P2', false);
@@ -47,7 +47,9 @@ export function renderBoard(player) {
     square.id = player.name + '-' + coord;
     square.addEventListener('click', (e) => _handleClick.call(player, e));
     square.addEventListener('dragover', dragover_handler);
+    square.addEventListener('dragenter', dragenter_handler);
     square.addEventListener('drop', drop_handler);
+    
     boardTemplate.appendChild(square);
   })
   _createShips(player)

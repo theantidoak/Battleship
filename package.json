@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack",
     "test": "jest",
-    "watch": "run-p webpack-watch jest-watch",
+    "watch": "npm run webpack-watch && npm run jest-watch",
     "webpack-watch": "webpack --watch",
     "jest-watch": "jest --watch *test.js"
   },
@@ -21,6 +21,7 @@
     "webpack-cli": "^5.1.1"
   },
   "dependencies": {
-    "html-webpack-plugin": "^5.5.1"
+    "html-webpack-plugin": "^5.5.1",
+    "style-loader": "^3.3.3"
   }
 }

@@ -15,7 +15,7 @@ function _createShips(player) {
     ship.classList.add(`${shipNames[i]}`)
     ship.id = shipNames[i] + '-' + player.name;
     ship.draggable = true;
-    ship.addEventListener('dragstart', dragstart_handler);
+    ship.addEventListener('dragstart', (e) => dragstart_handler.call(player, e));
     if (i === 4) {
       _makeSquares(ship, 5)
     } else if (i === 3) {
@@ -49,7 +49,6 @@ export function renderBoard(player) {
     square.addEventListener('dragover', dragover_handler);
     square.addEventListener('dragenter', dragenter_handler);
     square.addEventListener('drop', drop_handler);
-    
     boardTemplate.appendChild(square);
   })
   _createShips(player)

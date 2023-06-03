@@ -7,7 +7,7 @@ const player2 = new Player('P2', false);
 
 function _createShips(player) {
   const shipContainer = document.querySelector('.ships');
-  const shipNames = ['carrier', 'battleship', 'cruiser', 'submarine', 'destroyer'];
+  const shipNames = ['carrier', 'battleship', 'cruiser', 'submarine', 'destroyer'].reverse();
 
   for (let i = shipNames.length - 1; i >= 0; i--) {
     const ship = document.createElement('div');
@@ -16,20 +16,23 @@ function _createShips(player) {
     ship.id = shipNames[i] + '-' + player.name;
     ship.draggable = true;
     ship.addEventListener('dragstart', dragstart_handler);
-    ship.addEventListener('dragover', dragover_handler);
     if (i === 4) {
-      for (let i = 0; i < 5; i++) {
-        
-      }
-
-    } else if (i == 3) {
-      
-    } else if (i == 0) {
-
+      _makeSquares(ship, 5)
+    } else if (i === 3) {
+      _makeSquares(ship, 4)
+    } else if (i === 0) {
+      _makeSquares(ship, 2)
     } else {
-
+      _makeSquares(ship, 3)
     }
     shipContainer.appendChild(ship);
+  }
+}
+
+function _makeSquares(ship, num) {
+  for (let j = 0; j < num; j++) {
+    const square = document.createElement('div');
+    ship.appendChild(square);
   }
 }
 
@@ -41,10 +44,10 @@ export function renderBoard(player) {
   player.board.emptyCoords.forEach((coord) => {
     const square = document.createElement('div');
     square.classList.add('battleship-square');
-    square.id = coord;
+    square.id = player.name + '-' + coord;
     square.addEventListener('click', (e) => _handleClick.call(player, e));
-    square.addEventListener('drop', drop_handler);
     square.addEventListener('dragover', dragover_handler);
+    square.addEventListener('drop', drop_handler);
     boardTemplate.appendChild(square);
   })
   _createShips(player)
@@ -89,7 +92,7 @@ function _handleClick(e) {
   const attacker = _getAttacker();
   const square = e.currentTarget;
 
-  const coords = square.id.split(',').map(Number);
+  const coords = square.id.slice(3).split(',').map(Number);
   if (square.parentElement.id === attacker.name) return;
   
   attacker.attackEnemy(coords);

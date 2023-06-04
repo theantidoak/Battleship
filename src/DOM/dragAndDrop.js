@@ -17,8 +17,11 @@ export function drop_handler(e) {
   const draggable = document.getElementById(data);
   const isValid = _isValidDrop(this, target, draggable);
   if (isValid) {
-    target.classList.add(data)
+    target.classList.add(data);
+    draggable.classList.remove('docked');
     target.appendChild(draggable);
+    this.pieces.push(draggable.id.slice(3));
+    this.board.placeShip(draggable.children.length, target.id.slice(3).split(',').map(Number));
   }
 }
 

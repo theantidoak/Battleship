@@ -9,6 +9,7 @@ export class Player {
     this.misses = [];
     this.sunkShips = [];
     this.board = new Gameboard();
+    this.pieces = [];
   }
 
   attackEnemy(coords) {

@@ -5,7 +5,11 @@ class Game {
   constructor() {
     this.player1 = new Player('P1', true);
     this.player2 = new Player('P2', false);
-    this.setPieces = false;
+    this.pieces = false;
+  }
+
+  setPieces() {
+    this.pieces = this.player1.pieces.length + this.player2.pieces.length === 10 ? true : false;
   }
 }
 
@@ -16,22 +20,14 @@ document.addEventListener('DOMContentLoaded', _bindButtons);
 function _bindButtons() {
   const setPiecesBtn = document.querySelector('.set-direction');
   setPiecesBtn.addEventListener('click', () => {
-    game.player1.isVertical = !game.player1.isVertical;
-    game.player2.isVertical = !game.player2.isVertical;
-
-    const ships = document.querySelectorAll('.ship');
+    game.player1.board.isVertical = !game.player1.board.isVertical;
+    game.player2.board.isVertical = !game.player2.board.isVertical;
+    const ships = document.querySelectorAll('.docked');
     ships.forEach((ship) => {
       ship.style.display = ship.style.display === 'flex' ? 'grid' : 'flex';
     })
-  })
+  });
 
-  const startGameBtn = document.querySelector('.start-game');
-  startGameBtn.addEventListener('click', startGame);
-
-  function startGame() {
-    game.setPieces = true;
-    startGameBtn.removeEventListener('click', startGame)
-  }
 };
 
 function _createShips(player) {
@@ -41,7 +37,8 @@ function _createShips(player) {
   for (let i = shipNames.length - 1; i >= 0; i--) {
     const ship = document.createElement('div');
     ship.classList.add('ship');
-    ship.classList.add(`${shipNames[i]}`)
+    ship.classList.add(`${shipNames[i]}`);
+    ship.classList.add('docked');
     ship.id = player.name + '-' + shipNames[i];
     ship.draggable = true;
     ship.addEventListener('dragstart', dragstart_handler);
@@ -92,11 +89,14 @@ function _changeSquareBackground(square, board, coords) {
   }
 
   square.style.backgroundColor = wasHit ? 'red' : 'blue';
+  square.firstElementChild.firstElementChild.style.backgroundColor = wasHit ? 'red' : 'blue';
 }
 
 
 function _handleClick(e) {
-  if (!game.setPieces || this.turn || e.target.id.slice(0, 2) !== this.name) return;
+  e.stopPropagation();
+  game.setPieces();
+  if (!game.pieces || this.turn || e.currentTarget.id.slice(0, 2) !== this.name) return;
 
   const defender = this;
   const attacker = game.player1 === this ? game.player2 : game.player1;
@@ -109,7 +109,8 @@ function _handleClick(e) {
   defender.changeTurn();
 
   _changeSquareBackground(square, this.board, coords);
-  
+  console.log(attacker);
+  console.log(defender);
   return;
 }
 

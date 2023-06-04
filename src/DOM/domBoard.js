@@ -1,5 +1,5 @@
 import { Player } from "../person";
-import { dragstart_handler, drop_handler, dragover_handler, dragenter_handler } from "./dragAndDrop";
+import { dragstart_handler, drop_handler, dragover_handler } from "./dragAndDrop";
 
 const player1 = new Player('P1', true);
 const player2 = new Player('P2', false);
@@ -47,7 +47,6 @@ export function renderBoard(player) {
     square.id = player.name + '-' + coord;
     square.addEventListener('click', (e) => _handleClick.call(player, e));
     square.addEventListener('dragover', dragover_handler);
-    square.addEventListener('dragenter', dragenter_handler);
     square.addEventListener('drop', drop_handler);
     boardTemplate.appendChild(square);
   })
@@ -66,15 +65,6 @@ function _changeSquareBackground(square, wasHit) {
 function _changeTurns() {
   player1.changeTurn();
   player2.changeTurn();
-}
-
-function placeShips(player) {
-  player.board.placeShip(4, [4, 4]);
-  player.board.placeShip(3, [6, 9]);
-  player.board.placeShip(5, [7, 6]);
-  player.board.changeDirection();
-  player.board.placeShip(2, [0, 0]);
-  player.board.placeShip(3, [1, 4]);
 }
 
 function _wasHit(board, coords) {
@@ -102,9 +92,6 @@ function _handleClick(e) {
 
   const wasHit = _wasHit(this.board, coords);
   _changeSquareBackground(square, wasHit);
-
-  console.log(attacker);
-  console.log(this);
   
   return;
 }

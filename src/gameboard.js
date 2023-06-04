@@ -22,7 +22,7 @@ export class Gameboard {
 
     for (let i = 9; i >= 0; i--) {
       for (let j = 0; j < 10; j++) {
-        coords.push([i, j]);
+        coords.push([j, i]);
       }
     }
 
@@ -138,12 +138,3 @@ export class Gameboard {
   }
 }
 
-const board = new Gameboard();
-
-// board.changeDirection();
-board.placeShip(4, [4, 4]);
-board.placeShip(3, [6, 9]);
-board.placeShip(5, [7, 6]);
-board.changeDirection();
-board.placeShip(2, [0, 0]);
-board.placeShip(3, [1, 4]);

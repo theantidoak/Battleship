@@ -1,9 +1,38 @@
 import { Player } from "../person";
 import { dragstart_handler, drop_handler, dragover_handler } from "./dragAndDrop";
 
-const player1 = new Player('P1', true);
-const player2 = new Player('P2', false);
+class Game {
+  constructor() {
+    this.player1 = new Player('P1', true);
+    this.player2 = new Player('P2', false);
+    this.setPieces = false;
+  }
+}
 
+const game = new Game();
+
+document.addEventListener('DOMContentLoaded', _bindButtons);
+
+function _bindButtons() {
+  const setPiecesBtn = document.querySelector('.set-direction');
+  setPiecesBtn.addEventListener('click', () => {
+    game.player1.isVertical = !game.player1.isVertical;
+    game.player2.isVertical = !game.player2.isVertical;
+
+    const ships = document.querySelectorAll('.ship');
+    ships.forEach((ship) => {
+      ship.style.display = ship.style.display === 'flex' ? 'grid' : 'flex';
+    })
+  })
+
+  const startGameBtn = document.querySelector('.start-game');
+  startGameBtn.addEventListener('click', startGame);
+
+  function startGame() {
+    game.setPieces = true;
+    startGameBtn.removeEventListener('click', startGame)
+  }
+};
 
 function _createShips(player) {
   const shipContainer = document.querySelector('.ships');
@@ -13,9 +42,9 @@ function _createShips(player) {
     const ship = document.createElement('div');
     ship.classList.add('ship');
     ship.classList.add(`${shipNames[i]}`)
-    ship.id = shipNames[i] + '-' + player.name;
+    ship.id = player.name + '-' + shipNames[i];
     ship.draggable = true;
-    ship.addEventListener('dragstart', (e) => dragstart_handler.call(player, e));
+    ship.addEventListener('dragstart', dragstart_handler);
     if (i === 4) {
       _makeSquares(ship, 5)
     } else if (i === 3) {
@@ -47,56 +76,44 @@ export function renderBoard(player) {
     square.id = player.name + '-' + coord;
     square.addEventListener('click', (e) => _handleClick.call(player, e));
     square.addEventListener('dragover', dragover_handler);
-    square.addEventListener('drop', drop_handler);
+    square.addEventListener('drop', (e) => drop_handler.call(player, e));
     boardTemplate.appendChild(square);
   })
   _createShips(player)
   boardContainer.appendChild(boardTemplate);
 }
 
-function _getAttacker() {
-  return player1.turn ? player1 : player2;
-}
+function _changeSquareBackground(square, board, coords) {
+  const prevHit = board.gridHits.at(-1);
+  let wasHit = false;
 
-function _changeSquareBackground(square, wasHit) {
-  square.style.backgroundColor = wasHit ? 'red' : 'blue';
-}
-
-function _changeTurns() {
-  player1.changeTurn();
-  player2.changeTurn();
-}
-
-function _wasHit(board, coords) {
-  const lastHit = board.gridHits.at(-1);
-
-  if (lastHit && coords[0] === lastHit[0] && coords[1] === lastHit[1]) {
-    return true;
+  if (prevHit && coords[0] === prevHit[0] && coords[1] === prevHit[1]) {
+    wasHit = true;
   }
 
-  return false;
+  square.style.backgroundColor = wasHit ? 'red' : 'blue';
 }
 
 
 function _handleClick(e) {
-  const defenderBoard = this.board;
-  const attacker = _getAttacker();
-  const square = e.currentTarget;
+  if (!game.setPieces || this.turn || e.target.id.slice(0, 2) !== this.name) return;
 
+  const defender = this;
+  const attacker = game.player1 === this ? game.player2 : game.player1;
+  const square = e.currentTarget;
   const coords = square.id.slice(3).split(',').map(Number);
-  if (square.parentElement.id === attacker.name) return;
   
   attacker.attackEnemy(coords);
-  defenderBoard.receiveAttack(coords);
-  _changeTurns();
+  defender.board.receiveAttack(coords);
+  attacker.changeTurn();
+  defender.changeTurn();
 
-  const wasHit = _wasHit(this.board, coords);
-  _changeSquareBackground(square, wasHit);
+  _changeSquareBackground(square, this.board, coords);
   
   return;
 }
 
 export function gameLoop() {
-  renderBoard(player1);
-  renderBoard(player2);
+  renderBoard(game.player1);
+  renderBoard(game.player2);
 }

@@ -1,7 +1,7 @@
 import { Gameboard } from "./gameboard";
 
 export class Player {
-  constructor(name, turn) {
+  constructor(name, turn, isAI) {
     this.name = name;
     this.turn = turn;
     this.moves = [];
@@ -10,13 +10,7 @@ export class Player {
     this.sunkShips = [];
     this.board = new Gameboard();
     this.pieces = [];
-  }
-
-  attackEnemy(coords) {
-    const exists = this.moves.some((move) => move[0] === coords[0] && move[1] === coords[1]);
-    if (!exists) {
-      this.moves.push(coords);
-    }
+    this.isAI = isAI;
   }
 
   changeTurn() {
@@ -51,11 +45,55 @@ export class Player {
       : [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
     const exists = this.moves.some((coords) => move[0] === coords[0] && move[1] === coords[1]);
     if (exists) {
-      this.makePlay();
+      return this.makeAIPlay();
     }
 
-    this.moves.push(move);
     return move;
+  }
+
+  isValidDrop(shipLength, coords) {
+    const isVertical = this.board.isVertical;
+    const size = isVertical ? coords[1] : coords[0];
+    const draggableSize = shipLength - 1;
+    const inGrid = (isVertical && size >= draggableSize) || (!isVertical && size + draggableSize < 10);
+    let pieceOverlap = false;
+
+    for (let i = 0; i < shipLength; i++) {
+      const isValid = isVertical ? this.board.isValidSquare([coords[0], coords[1] - i]) : this.board.isValidSquare([coords[0] + i, coords[1]]);
+
+      if (!isValid) {
+        pieceOverlap = true;
+        break;
+      }
+    }
+      
+    return inGrid && !pieceOverlap ? true : false;
+  }
+
+  _getValidCoords(shipLength) {
+    const randomIndex = Math.floor(Math.random() * this.board.emptyCoords.length);
+    const coords = this.board.emptyCoords[randomIndex];
+    const validDrop = this.isValidDrop(shipLength, coords);
+
+    if (!validDrop) {
+      return this._getValidCoords(shipLength);
+    }
+    return coords;
+  }
+
+  makeAISetPieces() {
+    const ships  = [2, 3, 3, 4, 5];
+
+    for (let i = 0; i < ships.length; i++) {
+      const coords = this._getValidCoords(ships[i]);
+      Math.floor(Math.random() * 2) == 1 ? this.board.changeDirection() : null;
+      this.pieces.push(this.board._getShipName(ships[i]));
+      this.board.placeShip(ships[i], coords);
+    }
+  }
+
+  attackEnemy(coords) {
+    this.moves.push(coords);
   }
 
   recordHit(coords) {

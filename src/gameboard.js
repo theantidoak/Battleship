@@ -45,7 +45,7 @@ export class Gameboard {
     return coordsArray.some((coords) => newCoords[0] === coords[0] && newCoords[1] === coords[1]);
   }
 
-  _isValidSquare(coords) {
+  isValidSquare(coords) {
     const [x, y] = coords;
     const exists = this._checkIfExists(this.emptyCoords, coords);
     if (exists && x < 10 && x > -1 && y < 10 && y > -1) {
@@ -56,7 +56,7 @@ export class Gameboard {
   }
 
   _getShipCoords(length, firstCoords, shipCoords=[]) {
-    if (!this._isValidSquare(firstCoords)) {
+    if (!this.isValidSquare(firstCoords)) {
       return false;
     } 
 

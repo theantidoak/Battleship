@@ -3,8 +3,8 @@ import { dragstart_handler, drop_handler, dragover_handler } from "./dragAndDrop
 
 class Game {
   constructor() {
-    this.player1 = new Player('P1', true);
-    this.player2 = new Player('P2', false);
+    this.player1 = new Player('P1', true, false);
+    this.player2 = new Player('P2', false, true);
     this.pieces = false;
   }
 
@@ -62,7 +62,7 @@ function _makeSquares(ship, num) {
   }
 }
 
-export function renderBoard(player) {
+export function renderBoard(player, ai) {
   const boardContainer = document.querySelector('.boards');
   const boardTemplate = document.createElement('div');
   boardTemplate.id = player.name;
@@ -72,15 +72,23 @@ export function renderBoard(player) {
     square.classList.add('battleship-square');
     square.id = player.name + '-' + coord;
     square.addEventListener('click', (e) => _handleClick.call(player, e));
-    square.addEventListener('dragover', dragover_handler);
-    square.addEventListener('drop', (e) => drop_handler.call(player, e));
     boardTemplate.appendChild(square);
   })
-  _createShips(player)
+
+  if (ai) {
+    game.player2.makeAISetPieces();
+  } else {
+    [...boardTemplate.children].forEach((square) => {
+      square.addEventListener('dragover', dragover_handler);
+      square.addEventListener('drop', (e) => drop_handler.call(player, e));
+    })
+    _createShips(player)
+  }
+  
   boardContainer.appendChild(boardTemplate);
 }
 
-function _changeSquareBackground(square, board, coords) {
+function _wasHit(square, board, coords) {
   const prevHit = board.gridHits.at(-1);
   let wasHit = false;
 
@@ -89,32 +97,45 @@ function _changeSquareBackground(square, board, coords) {
   }
 
   square.style.backgroundColor = wasHit ? 'red' : 'blue';
-  square.firstElementChild.firstElementChild.style.backgroundColor = wasHit ? 'red' : 'blue';
+  if (square.firstElementChild && square.firstElementChild.firstElementChild) {
+    square.firstElementChild.firstElementChild.style.backgroundColor = wasHit ? 'red' : 'blue';
+  }
+
+  return wasHit;
 }
 
 
 function _handleClick(e) {
   e.stopPropagation();
   game.setPieces();
-  if (!game.pieces || this.turn || e.currentTarget.id.slice(0, 2) !== this.name) return;
-
+  console.log(game);
+  
   const defender = this;
   const attacker = game.player1 === this ? game.player2 : game.player1;
-  const square = e.currentTarget;
-  const coords = square.id.slice(3).split(',').map(Number);
-  
+  const coords = attacker.isAI ? attacker.makeAIPlay() : e.currentTarget.id.slice(3).split(',').map(Number);
+  const exists = attacker.moves.some((move) => move[0] === coords[0] && move[1] === coords[1]);
+
+  if (exists || !game.pieces || this.turn || (!attacker.isAI && e.currentTarget.id.slice(0, 2) !== this.name)) return;
+  const square = document.getElementById(`${defender.name + '-' + coords}`);
+
   attacker.attackEnemy(coords);
   defender.board.receiveAttack(coords);
+  
+
+  const hit = _wasHit(square, this.board, coords);
+  hit ? attacker.recordHit(coords) : attacker.recordMiss(coords);
+
   attacker.changeTurn();
   defender.changeTurn();
 
-  _changeSquareBackground(square, this.board, coords);
-  console.log(attacker);
-  console.log(defender);
+  if (defender.isAI) {
+    _handleClick.call(attacker, e);
+  }
+
   return;
 }
 
 export function gameLoop() {
-  renderBoard(game.player1);
-  renderBoard(game.player2);
+  renderBoard(game.player1, false);
+  renderBoard(game.player2, true);
 }

@@ -1,4 +1,5 @@
 import { Gameboard } from "./gameboard";
+import { isValidSquare } from "./shortcodes";
 
 export class Player {
   constructor(name, turn, isAI) {
@@ -7,15 +8,28 @@ export class Player {
     this.moves = [];
     this.hits = [];
     this.misses = [];
-    this.sunkShips = [];
     this.board = new Gameboard();
     this.pieces = [];
+    this.sunkShips = [];
     this.isAI = isAI;
   }
 
   changeTurn() {
     this.turn = !this.turn;
   }
+
+  // Attack
+
+  attackEnemy(coords) {
+    this.moves.push(coords);
+  }
+
+  recordHit(hit, wasSunk) {
+    hit ? this.hits.push(coords) : this.misses.push(coords);
+    wasSunk ? this.sunkShips.push(wasSunk) : null;
+  }
+
+  // AI Move
 
   _isValid(coord) {
     return coord > -1 && coord < 10 ? true : false;
@@ -36,20 +50,33 @@ export class Player {
     return adjCoords;
   }
 
-  makeAIPlay() {
+  _getPreciseHit() {
+    let adjCoords = [];
+
+    for (let i = 0; i < this.hits.length; i++) {
+      const hit = this.hits[i];
+      adjCoords.push(...this._findAdjacent(hit));
+    }
+
+    return adjCoords;
+  }
+
+  getAICoords() {
     const prevHit = this.hits.length > 0 ? true : false;
-    const adjCoords = prevHit ? this._findAdjacent(this.hits[this.hits.length - 1]) : [];
+    const adjCoords = prevHit ? this._getPreciseHit() : [];
     const randomNumber = Math.floor(Math.random() * adjCoords.length);
     const move = adjCoords.length > 0
       ? adjCoords[randomNumber]
       : [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
     const exists = this.moves.some((coords) => move[0] === coords[0] && move[1] === coords[1]);
     if (exists) {
-      return this.makeAIPlay();
+      return this.getAICoords();
     }
 
     return move;
   }
+
+  // AI Ship Placement
 
   isValidDrop(shipLength, coords) {
     const isVertical = this.board.isVertical;
@@ -59,14 +86,13 @@ export class Player {
     let pieceOverlap = false;
 
     for (let i = 0; i < shipLength; i++) {
-      const isValid = isVertical ? this.board.isValidSquare([coords[0], coords[1] - i]) : this.board.isValidSquare([coords[0] + i, coords[1]]);
-
+      const isValid = isVertical ? isValidSquare(this.board.emptyCoords, [coords[0], coords[1] - i]) : isValidSquare(this.board.emptyCoords, [coords[0] + i, coords[1]]);
+      console.log(isValid)
       if (!isValid) {
         pieceOverlap = true;
         break;
       }
     }
-      
     return inGrid && !pieceOverlap ? true : false;
   }
 
@@ -74,10 +100,10 @@ export class Player {
     const randomIndex = Math.floor(Math.random() * this.board.emptyCoords.length);
     const coords = this.board.emptyCoords[randomIndex];
     const validDrop = this.isValidDrop(shipLength, coords);
-
     if (!validDrop) {
       return this._getValidCoords(shipLength);
     }
+
     return coords;
   }
 
@@ -85,22 +111,10 @@ export class Player {
     const ships  = [2, 3, 3, 4, 5];
 
     for (let i = 0; i < ships.length; i++) {
-      const coords = this._getValidCoords(ships[i]);
       Math.floor(Math.random() * 2) == 1 ? this.board.changeDirection() : null;
+      const coords = this._getValidCoords(ships[i]);
       this.pieces.push(this.board._getShipName(ships[i]));
       this.board.placeShip(ships[i], coords);
     }
-  }
-
-  attackEnemy(coords) {
-    this.moves.push(coords);
-  }
-
-  recordHit(coords) {
-    this.hits.push(coords);
-  }
-
-  recordMiss(coords) {
-    this.misses.push(coords);
   }
 }

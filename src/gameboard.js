@@ -1,8 +1,9 @@
 import { Ship } from "./ship";
+import { existsInArray, isValidSquare } from "./shortcodes";
 
 export class Gameboard {
   constructor() {
-    this.emptyCoords = this._createBoard();
+    this.emptyCoords = this._populateEmpty();
     this.occupiedCoords = [];
     this.gridHits = [];
     this.gridMisses = [];
@@ -17,7 +18,7 @@ export class Gameboard {
     this.lost = false;
   }
 
-  _createBoard() {
+  _populateEmpty() {
     let coords = [];
 
     for (let i = 9; i >= 0; i--) {
@@ -29,34 +30,12 @@ export class Gameboard {
     return coords;
   }
 
-  _filterEmpty(newCoords) {
-    this.emptyCoords = this.emptyCoords.filter((coords) => !newCoords.find((coord) => coord[0] === coords[0] && coord[1] === coords[1]))
-  }
-
-  _addToOccupied(newCoords) {
-    this.occupiedCoords.push(...newCoords);
-  }
-
   changeDirection() {
     this.isVertical = !this.isVertical;
   }
 
-  _checkIfExists(coordsArray, newCoords) {
-    return coordsArray.some((coords) => newCoords[0] === coords[0] && newCoords[1] === coords[1]);
-  }
-
-  isValidSquare(coords) {
-    const [x, y] = coords;
-    const exists = this._checkIfExists(this.emptyCoords, coords);
-    if (exists && x < 10 && x > -1 && y < 10 && y > -1) {
-      return true;
-    }
-
-    return false;
-  }
-
   _getShipCoords(length, firstCoords, shipCoords=[]) {
-    if (!this.isValidSquare(firstCoords)) {
+    if (!isValidSquare(this.emptyCoords, firstCoords)) {
       return false;
     } 
 
@@ -89,6 +68,14 @@ export class Gameboard {
     }
   }
 
+  _addToOccupied(newCoords) {
+    this.occupiedCoords.push(...newCoords);
+  }
+
+  _removeFromEmpty(newCoords) {
+    this.emptyCoords = this.emptyCoords.filter((coords) => !newCoords.find((coord) => coord[0] === coords[0] && coord[1] === coords[1]))
+  }
+
   placeShip(length, firstCoords) {
     const shipCoords = this._getShipCoords(length, firstCoords);
     if (!shipCoords) {
@@ -100,41 +87,54 @@ export class Gameboard {
       ship: new Ship(length)
     };
     this._addToOccupied(shipCoords);
-    this._filterEmpty(shipCoords);
+    this._removeFromEmpty(shipCoords);
   }
 
-  _findHitShip(newCoords) {
+  _recordSunkShip(target) {
+    if (this.fleet[target].ship.length === this.fleet[target].ship.hits) {
+      this.fleet[target].ship.isSunk();
+      return true;
+    }
+    return false;
+  }
+
+  _addHitToShip(newCoords) {
     const ships = Object.keys(this.fleet);
-    ships.forEach((ship) => {
-      const targetHit = this.fleet[ship] 
-        ? this._checkIfExists(this.fleet[ship].coords, newCoords) 
+    let newSunk;
+    ships.forEach((target) => {
+      const targetHit = this.fleet[target] 
+        ? existsInArray(this.fleet[target].coords, newCoords) 
         : null;
       if (targetHit) {
-        this.fleet[ship].ship.addHit();
+        this.fleet[target].ship.addHit();
+        newSunk = this._recordSunkShip(target) ? target : null;
       }
     })
+    return newSunk;
   }
 
-  _deadFleet() {
+  _isDepleted() {
     const ships = Object.keys(this.fleet);
-    const floatingShips = ships.filter((ship) => this.fleet[ship] && this.fleet[ship].ship.sunk)
+    const floatingShips = ships.filter((target) => this.fleet[target].ship.sunk);
 
-    return floatingShips.length > 0 ? false : true;
+    return floatingShips.length === 5 ? true : false;
   }
 
-  receiveAttack(newCoords) {
-    const exists = this._checkIfExists(this.occupiedCoords, newCoords);
-    
-    if (exists) {
+  receiveAttack(newCoords, hit) {
+    let newSunk = null;
+    if (hit) {
       this.gridHits.push(newCoords);
-      this._findHitShip(newCoords);
+      newSunk = this._addHitToShip(newCoords);
     } else {
       this.gridMisses.push(newCoords);
     }
 
-    if (this._deadFleet()) {
+    if (this._isDepleted()) {
       this.lost = true;
+      console.log('Finished')
     }
+
+    return newSunk;
   }
 }
 

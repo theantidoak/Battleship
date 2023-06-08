@@ -1,4 +1,4 @@
-import { gameLoop } from "./DOM/domBoard";
+import { gameStart } from "./DOM/domBoard";
 import './styles.css';
 
-gameLoop();
+document.addEventListener('DOMContentLoaded', gameStart);

@@ -1,5 +1,5 @@
-import { Gameboard } from "./gameboard";
-import { isValidSquare } from "./shortcodes";
+import { board } from "./board";
+import { isValidAxis, existsInArray, isValidDrop } from "./shortcodes";
 
 export class Player {
   constructor(name, turn, isAI) {
@@ -8,7 +8,7 @@ export class Player {
     this.moves = [];
     this.hits = [];
     this.misses = [];
-    this.board = new Gameboard();
+    this.board = new board(name);
     this.pieces = [];
     this.sunkShips = [];
     this.isAI = isAI;
@@ -18,22 +18,15 @@ export class Player {
     this.turn = !this.turn;
   }
 
-  // Attack
-
   attackEnemy(coords) {
     this.moves.push(coords);
   }
 
-  recordHit(hit, wasSunk) {
+  recordMove(coords, hit) {
     hit ? this.hits.push(coords) : this.misses.push(coords);
-    wasSunk ? this.sunkShips.push(wasSunk) : null;
   }
 
   // AI Move
-
-  _isValid(coord) {
-    return coord > -1 && coord < 10 ? true : false;
-  }
 
   _findAdjacent(coords) {
     let adjCoords = [];
@@ -41,8 +34,8 @@ export class Player {
     for (let i = 0; i < options.length; i++) {
       const x = coords[0] + options[i][0];
       const y = coords[1] + options[i][1];
-      const exists = this.moves.some((coords) => x === coords[0] && y === coords[1]);
-      if (this._isValid(x) && this._isValid(y) && !exists) {
+      const exists = existsInArray(this.moves, [x, y]);
+      if (isValidAxis(x) && isValidAxis(y) && !exists) {
         adjCoords.push([x, y]);
       }
     }
@@ -68,7 +61,7 @@ export class Player {
     const move = adjCoords.length > 0
       ? adjCoords[randomNumber]
       : [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
-    const exists = this.moves.some((coords) => move[0] === coords[0] && move[1] === coords[1]);
+    const exists = existsInArray(this.moves, move);
     if (exists) {
       return this.getAICoords();
     }
@@ -78,28 +71,10 @@ export class Player {
 
   // AI Ship Placement
 
-  isValidDrop(shipLength, coords) {
-    const isVertical = this.board.isVertical;
-    const size = isVertical ? coords[1] : coords[0];
-    const draggableSize = shipLength - 1;
-    const inGrid = (isVertical && size >= draggableSize) || (!isVertical && size + draggableSize < 10);
-    let pieceOverlap = false;
-
-    for (let i = 0; i < shipLength; i++) {
-      const isValid = isVertical ? isValidSquare(this.board.emptyCoords, [coords[0], coords[1] - i]) : isValidSquare(this.board.emptyCoords, [coords[0] + i, coords[1]]);
-      console.log(isValid)
-      if (!isValid) {
-        pieceOverlap = true;
-        break;
-      }
-    }
-    return inGrid && !pieceOverlap ? true : false;
-  }
-
   _getValidCoords(shipLength) {
     const randomIndex = Math.floor(Math.random() * this.board.emptyCoords.length);
     const coords = this.board.emptyCoords[randomIndex];
-    const validDrop = this.isValidDrop(shipLength, coords);
+    const validDrop = isValidDrop(this, shipLength, coords);
     if (!validDrop) {
       return this._getValidCoords(shipLength);
     }

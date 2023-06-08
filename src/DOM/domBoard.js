@@ -2,7 +2,7 @@ import { game } from "../game";
 import { dragstart_handler, drop_handler, dragover_handler } from "./dragAndDrop";
 import { handleMove } from "./domEvents";
 
-function _bindButtons() {
+function bindButtons() {
   const setPiecesBtn = document.querySelector('.set-direction');
   setPiecesBtn.addEventListener('click', () => {
     game.player1.board.isVertical = !game.player1.board.isVertical;
@@ -14,14 +14,14 @@ function _bindButtons() {
   });
 };
 
-function _makeShipSquares(ship, num) {
+function makeShipSquares(ship, num) {
   for (let j = 0; j < num; j++) {
     const square = document.createElement('div');
     ship.appendChild(square);
   }
 }
 
-function _makeShips(player) {
+function makeShips(player) {
   const shipContainer = document.querySelector('.ships');
   const shipNames = ['carrier', 'battleship', 'cruiser', 'submarine', 'destroyer'].reverse();
 
@@ -34,19 +34,19 @@ function _makeShips(player) {
     ship.draggable = true;
     ship.addEventListener('dragstart', dragstart_handler);
     if (i === 4) {
-      _makeShipSquares(ship, 5)
+      makeShipSquares(ship, 5)
     } else if (i === 3) {
-      _makeShipSquares(ship, 4)
+      makeShipSquares(ship, 4)
     } else if (i === 0) {
-      _makeShipSquares(ship, 2)
+      makeShipSquares(ship, 2)
     } else {
-      _makeShipSquares(ship, 3)
+      makeShipSquares(ship, 3)
     }
     shipContainer.appendChild(ship);
   }
 }
 
-function _makeGridSquares(player, boardTemplate) {
+function makeGridSquares(player, boardTemplate) {
   player.board.emptyCoords.forEach((coord) => {
     const square = document.createElement('div');
     square.classList.add('battleship-square');
@@ -58,12 +58,12 @@ function _makeGridSquares(player, boardTemplate) {
 }
 
 
-function _makeGrids(player, ai) {
+function makeGrids(player, ai) {
   const boardContainer = document.querySelector('.boards');
   const boardTemplate = document.createElement('div');
   boardTemplate.id = player.name;
   boardTemplate.classList.add('battleship-board');
-  const playerBoard = _makeGridSquares(player, boardTemplate);
+  const playerBoard = makeGridSquares(player, boardTemplate);
 
   if (ai) {
     game.player2.makeAISetPieces();
@@ -72,14 +72,14 @@ function _makeGrids(player, ai) {
       square.addEventListener('dragover', dragover_handler);
       square.addEventListener('drop', (e) => drop_handler.call(player, e));
     })
-    _makeShips(player)
+    makeShips(player)
   }
   
   boardContainer.appendChild(playerBoard);
 }
 
 export function gameStart() {
-  _bindButtons();
-  _makeGrids(game.player1, false);
-  _makeGrids(game.player2, true);
+  bindButtons();
+  makeGrids(game.player1, false);
+  makeGrids(game.player2, true);
 }

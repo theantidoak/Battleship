@@ -1,7 +1,14 @@
 import { game } from "../game";
 import { existsInArray } from "../shortcodes";
 
-function _changeBackgroundColor(square, hit) {
+export function appendShipToGrid(draggable, target, player) {
+  draggable.classList.remove('docked');
+  target.appendChild(draggable);
+  player.pieces.push(draggable.id.slice(3));
+  player.board.placeShip(draggable.children.length, target.id.slice(3).split(',').map(Number));
+}
+
+function changeBackgroundColor(square, hit) {
   square.style.backgroundColor = hit ? 'red' : 'blue';
   if (square.firstElementChild && square.firstElementChild.firstElementChild) {
     square.firstElementChild.firstElementChild.style.backgroundColor = hit ? 'red' : 'blue';
@@ -10,25 +17,26 @@ function _changeBackgroundColor(square, hit) {
 
 export function handleMove(e) {
   e.stopPropagation();
-  game.setPieces();
+  game.updateShipsReady();
   console.log(game);
   
   const defender = this;
   const attacker = game.player1 === this ? game.player2 : game.player1;
   const coords = attacker.isAI ? attacker.getAICoords() : e.currentTarget.id.slice(3).split(',').map(Number);
-  const inValidCoords = attacker.moves.some((move) => move[0] === coords[0] && move[1] === coords[1]);
+  const inValidCoords = existsInArray(attacker.moves, coords);
   const square = document.getElementById(`${defender.name + '-' + coords}`);
   
-  if (inValidCoords || !game.pieces || this.turn || (!attacker.isAI && e.currentTarget.id.slice(0, 2) !== this.name)) return;
+  if (inValidCoords || !game.shipsReady || this.turn || (!attacker.isAI && e.currentTarget.id.slice(0, 2) !== this.name)) return;
   
   attacker.attackEnemy(coords);
   const hit = existsInArray(defender.board.occupiedCoords, coords);
-  const wasSunk = defender.board.receiveAttack(coords, hit);
-  attacker.recordHit(hit, wasSunk);
-  _changeBackgroundColor(square, hit);
+  defender.board.receiveAttack(coords, hit);
+  attacker.recordMove(coords, hit);
+  changeBackgroundColor(square, hit);
   defender.changeTurn();
   attacker.changeTurn();
-  
+
+  game.isGameOver();
 
   if (defender.isAI) {
     handleMove.call(attacker, e);

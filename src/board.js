@@ -1,9 +1,10 @@
 import { Ship } from "./ship";
 import { existsInArray, isValidSquare } from "./shortcodes";
 
-export class Gameboard {
-  constructor() {
+export class board {
+  constructor(name) {
     this.emptyCoords = this._populateEmpty();
+    this.name = name;
     this.occupiedCoords = [];
     this.gridHits = [];
     this.gridMisses = [];
@@ -93,48 +94,29 @@ export class Gameboard {
   _recordSunkShip(target) {
     if (this.fleet[target].ship.length === this.fleet[target].ship.hits) {
       this.fleet[target].ship.isSunk();
-      return true;
     }
-    return false;
   }
 
-  _addHitToShip(newCoords) {
+  _recordHit(newCoords) {
     const ships = Object.keys(this.fleet);
-    let newSunk;
     ships.forEach((target) => {
       const targetHit = this.fleet[target] 
         ? existsInArray(this.fleet[target].coords, newCoords) 
         : null;
       if (targetHit) {
         this.fleet[target].ship.addHit();
-        newSunk = this._recordSunkShip(target) ? target : null;
+        this._recordSunkShip(target);
       }
     })
-    return newSunk;
-  }
-
-  _isDepleted() {
-    const ships = Object.keys(this.fleet);
-    const floatingShips = ships.filter((target) => this.fleet[target].ship.sunk);
-
-    return floatingShips.length === 5 ? true : false;
   }
 
   receiveAttack(newCoords, hit) {
-    let newSunk = null;
     if (hit) {
       this.gridHits.push(newCoords);
-      newSunk = this._addHitToShip(newCoords);
+      this._recordHit(newCoords);
     } else {
       this.gridMisses.push(newCoords);
     }
-
-    if (this._isDepleted()) {
-      this.lost = true;
-      console.log('Finished')
-    }
-
-    return newSunk;
   }
 }
 

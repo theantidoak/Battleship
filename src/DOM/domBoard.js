@@ -1,18 +1,51 @@
-import { game } from "../game";
+import { Game } from "../game";
 import { dragstart_handler, drop_handler, dragover_handler } from "./dragAndDrop";
 import { handleMove } from "./domEvents";
 
-function bindButtons() {
+function bindSetPiecesBtns(game) {
   const setPiecesBtn = document.querySelector('.set-direction');
   setPiecesBtn.addEventListener('click', () => {
     game.player1.board.isVertical = !game.player1.board.isVertical;
     game.player2.board.isVertical = !game.player2.board.isVertical;
     const ships = document.querySelectorAll('.docked');
     ships.forEach((ship) => {
-      ship.style.display = ship.style.display === 'flex' ? 'grid' : 'flex';
+      ship.style.display = ship.style.display === "none" ? "none" : ship.style.display === 'flex' ? 'grid' : 'flex';
     })
   });
-};
+}
+
+export function bindStartButtons() {
+  const onePlayerBtn = document.getElementById("one-player");
+  const twoPlayerBtn = document.getElementById("two-player");
+  const startGameBtn = document.querySelector('.start-game');
+  const shipsContainer = document.querySelector('.ships');
+
+  onePlayerBtn.addEventListener('click', (e) => {
+    const game = gameStart(false);
+    e.currentTarget.parentElement.parentElement.style.display = "none";
+    shipsContainer.style.display = "flex";
+
+    bindSetPiecesBtns(game);
+  })
+  
+  twoPlayerBtn.addEventListener('click', (e) => {
+    const game = gameStart(true);
+    e.currentTarget.parentElement.parentElement.style.display = "none";
+    shipsContainer.style.display = "flex";
+
+    bindSetPiecesBtns(game);
+  })
+
+  startGameBtn.addEventListener('click', (e) => {
+    e.currentTarget.parentElement.style.display = "none";
+  });
+
+  const scorecardBtn = document.querySelector('#scorecard-btn');
+  scorecardBtn.addEventListener('click', () => {
+    const scorecard = document.querySelector('.scorecard');
+    scorecard.classList.toggle('open');
+  })
+}
 
 function makeShipSquares(ship, num) {
   for (let j = 0; j < num; j++) {
@@ -32,7 +65,7 @@ function makeShips(player) {
     ship.classList.add('docked');
     ship.id = player.name + '-' + shipNames[i];
     ship.draggable = true;
-    ship.addEventListener('dragstart', dragstart_handler);
+    ship.addEventListener('dragstart', (e) => dragstart_handler.call(player, e));
     if (i === 4) {
       makeShipSquares(ship, 5)
     } else if (i === 3) {
@@ -42,28 +75,34 @@ function makeShips(player) {
     } else {
       makeShipSquares(ship, 3)
     }
+
+    if (!player.isAI && player.name === "P2") {
+      ship.classList.add(`${player.name}`);
+      ship.style.display = "none";
+    }
+
     shipContainer.appendChild(ship);
   }
 }
 
-function makeGridSquares(player, boardTemplate) {
+function makeGridSquares(player, boardTemplate, game) {
   player.board.emptyCoords.forEach((coord) => {
     const square = document.createElement('div');
     square.classList.add('battleship-square');
     square.id = player.name + '-' + coord;
-    square.addEventListener('click', (e) => handleMove.call(player, e));
+    square.addEventListener('click', (e) => handleMove.call(game, e));
     boardTemplate.appendChild(square);
   })
   return boardTemplate;
 }
 
 
-function makeGrids(player, ai) {
+function makeGrids(game, player, ai) {
   const boardContainer = document.querySelector('.boards');
   const boardTemplate = document.createElement('div');
   boardTemplate.id = player.name;
   boardTemplate.classList.add('battleship-board');
-  const playerBoard = makeGridSquares(player, boardTemplate);
+  const playerBoard = makeGridSquares(player, boardTemplate, game);
 
   if (ai) {
     game.player2.makeAISetPieces();
@@ -72,14 +111,16 @@ function makeGrids(player, ai) {
       square.addEventListener('dragover', dragover_handler);
       square.addEventListener('drop', (e) => drop_handler.call(player, e));
     })
-    makeShips(player)
+    makeShips(player);
   }
+  
   
   boardContainer.appendChild(playerBoard);
 }
 
-export function gameStart() {
-  bindButtons();
-  makeGrids(game.player1, false);
-  makeGrids(game.player2, true);
+export function gameStart(ai) {
+  const game = new Game(!ai)
+  makeGrids(game, game.player1, false);
+  makeGrids(game, game.player2, !ai);
+  return game;
 }

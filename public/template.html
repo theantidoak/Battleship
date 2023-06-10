@@ -8,10 +8,78 @@
 </head>
 <body>
   <h1 class="title">Battleship</h1>
-  <div class="boards"></div>
-  <div class="ships"></div>
 
-  <button class="set-direction">Change Piece Direction</button>
-  <button class="start-game">Start Game</button>
+  <button id="scorecard-btn">Show/Hide Scorecard</button>
+  <div class="scorecard">
+    <div class="scorecard-P1">
+      <p>Player 1</p>
+      <ul>
+        <li>
+          <span>Turn: </span>
+          <span class="turn">Yes</span>
+        </li>
+        <li>
+          <span>Sunk Ships: </span>
+          <span class="sunk-ships">0</span>
+        </li>
+        <li>
+          <span>Floating Ships: </span>
+          <span class="floating-ships">5</span>
+        </li>
+        <li>
+          <span>Total Hits: </span>
+          <span class="total-hits">0</span>
+        </li>
+        <li>
+          <span>Total Misses: </span>
+          <span class="total-misses">0</span>
+        </li>
+      </ul>
+    </div>
+    <div class="scorecard-P2">
+      <p>Player 2</p>
+      <ul>
+        <li>
+          <span>Turn: </span>
+          <span class="turn">No</span>
+        </li>
+        <li>
+          <span>Sunk Ships: </span>
+          <span class="sunk-ships">0</span>
+        </li>
+        <li>
+          <span>Floating Ships: </span>
+          <span class="floating-ships">5</span>
+        </li>
+        <li>
+          <span>Total Hits: </span>
+          <span class="total-hits">0</span>
+        </li>
+        <li>
+          <span>Total Misses: </span>
+          <span class="total-misses">0</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="boards"></div>
+  <div class="ships">
+    <h2 class="ships-title">Player 1</h2>
+    <button class="set-direction" id="change-piece-direction">Change Piece Direction</button>
+  </div>
+
+  <div class="start-game-container">
+    <button class="start-game">Start Game</button>
+  </div>
+
+  <div class="opening-screen">
+    <h3>1-Player OR 2-Player?</h3>
+    <div class="opening-screen-btns">
+      <button id="one-player">1-Player</button>
+      <button id="two-player">2-Player</button>
+    </div>
+  </div>
+
 </body>
 </html>

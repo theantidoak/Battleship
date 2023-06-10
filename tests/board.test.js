@@ -40,3 +40,10 @@ test('Receive Attack (Missed)', () => {
   expect(testBoard.gridMisses.some(coord => coord[0] === 5 && coord[1] === 4)).toBe(true);
 })
 
+test('Replace Coords', () => {
+  testBoard.occupiedCoords = [[3, 4], [3, 5], [3, 6], [3, 7]];
+  testBoard.removeShip([3, 4], 4);
+  expect(testBoard.occupiedCoords).not.toEqual(expect.arrayContaining([[3, 4], [3, 5], [3, 6], [3, 7]]));
+  expect(testBoard.emptyCoords).toEqual(expect.arrayContaining([[3, 4], [3, 5], [3, 6], [3, 7]]));
+})
+

@@ -1,4 +1,4 @@
-import { gameStart } from "./DOM/domBoard";
+import { bindStartButtons } from "./DOM/domBoard";
 import './styles.css';
 
-document.addEventListener('DOMContentLoaded', gameStart);
+document.addEventListener("DOMContentLoaded", bindStartButtons);

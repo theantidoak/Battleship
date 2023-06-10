@@ -91,6 +91,12 @@ export class board {
     this._removeFromEmpty(shipCoords);
   }
 
+  removeShip(coords, length) {
+    const index = this.occupiedCoords.findIndex((arr) => arr.indexOf(coords) !== -1);
+    const replaceCoords = this.occupiedCoords.splice(index + 1, index + length + 1);
+    this.emptyCoords.push(...replaceCoords);
+  }
+
   _recordSunkShip(target) {
     if (this.fleet[target].ship.length === this.fleet[target].ship.hits) {
       this.fleet[target].ship.isSunk();

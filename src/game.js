@@ -1,9 +1,9 @@
 import { Player } from "./person";
 
 export class Game {
-  constructor() {
+  constructor(ai) {
     this.player1 = new Player('P1', true, false);
-    this.player2 = new Player('P2', false, true);
+    this.player2 = new Player('P2', false, ai);
     this.shipsReady = false;
     this.p1SunkShips = [];
     this.p2SunkShips = [];
@@ -36,11 +36,8 @@ export class Game {
     if (this.p1SunkShips.length === 5 || this.p2SunkShips.length === 5) { 
       this.p1SunkShips.length === 5 ? this.player1.board.lost = true : this.player2.board.lost = true;
       const winner = this.player1.board.lost === true ? "Player 2" : "Player 1"
-      console.log("Game Over: " + winner + " wins");
       return "Game Over: " + winner + " wins";
     }
     return "Game on"
   }
 }
-
-export const game = new Game();

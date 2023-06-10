@@ -1,0 +1,270 @@
+/*!******************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./src/styles.css ***!
+  \******************************************************************/
+:root {
+  height: 100vh;
+  width: 100vw;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button {
+  border-style: solid;
+  border-color: #dbdbdb;
+  background-color: #003a50;
+  color: #fff;
+  border-radius: 5px;
+  border-width: 1px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.149);
+  padding: 0.25rem 0.75rem;
+  width: fit-content;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+button#change-piece-direction {
+  width: 100%;
+  order: 5;
+  pointer-events: auto;
+}
+
+.start-game-container {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 0 #0000,0 0 #0000,0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  padding: 1.5rem;;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: fit-content;
+  height: fit-content;
+  z-index: 3;
+  display: none;
+}
+
+.start-game-container button {
+  padding: 1rem 2rem;
+}
+
+.title {
+  width: fit-content;
+  margin: 0 auto 2rem;
+  padding-top: 2rem;
+}
+
+.opening-screen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: clamp(15rem, 80vw, 30rem);
+  height: fit-content;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 0 #0000,0 0 #0000,0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  z-index: 1;
+  padding: 24px 1rem;
+}
+
+.opening-screen h3 {
+  margin: 0 0 1.25rem;
+  text-align: center;
+  color: #003a50;
+  font-size: 1.4rem;
+}
+
+.opening-screen-btns {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 5rem;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+button:hover {
+  background-color: #fff;
+  color: #003a50;
+}
+
+.boards {
+  display: flex;
+  gap: 4rem;
+  padding: 0 3rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  z-index: 1;
+  position: relative;
+  padding-bottom: 3rem;
+}
+
+.battleship-board {
+  display: grid;
+  grid-template-columns: repeat(10, clamp(25px, 9vw, 50px));
+  border: 1px solid black;
+  position: relative;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 0 #0000,0 0 #0000,0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  padding: .5rem;
+  margin-top: 2rem;
+}
+
+.battleship-square {
+  width: clamp(25px, 9vw, 50px);
+  height: clamp(25px, 9vw, 50px);
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+.battleship-square > div > div {
+  border: none;
+}
+
+.battleship-square:hover {
+  background-color: purple;
+}
+
+.ships {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  justify-content: space-between;
+  position: fixed;
+  bottom: 3rem;
+  width: clamp(15.25rem, 82vw, 30rem);
+  height: 25rem;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 0 #0000,0 0 #0000,0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  padding: 3rem 1.5rem 1.5rem;
+  z-index: 1;
+  pointer-events: none;
+  flex-wrap: wrap;
+  display: none;
+}
+
+.ship {
+  display: grid;
+  grid-template-columns: repeat(1, clamp(25px, 9vw, 50px));
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.ship > div {
+  cursor: pointer;
+  width: clamp(25px, 9vw, 50px);
+  min-width: clamp(25px, 9vw, 50px);
+  height: clamp(25px, 9vw, 50px);
+  background-color: darkgrey;
+  border: 1px solid black;
+}
+
+.ships-title {
+  position: absolute;
+  top: 0;
+}
+
+.game-over-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: fit-content;
+  height: fit-content;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 0 #0000,0 0 #0000,0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+  z-index: 5;
+}
+
+.game-over-message {
+  font-size: clamp(1rem, 4vw, 1.5rem);
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.scorecard {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  display: none;
+  width: fit-content;
+  height: fit-content;
+  gap: 5rem;
+  padding: 1rem;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 0 #0000,0 0 #0000,0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;
+}
+
+.scorecard.open {
+  display: flex;
+}
+
+.scorecard p {
+  text-decoration: underline;
+  text-align: center;
+}
+
+.scorecard ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.scorecard li {
+  margin: 0;
+  padding: .25rem 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.scorecard li span:last-child {
+  font-weight: bold;
+}
+
+#scorecard-btn {
+  position: absolute;
+  top: 5rem;
+  right: 0;
+  left: 0;
+  width: fit-content;
+  margin: 0 auto;
+}
+

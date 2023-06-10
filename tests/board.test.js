@@ -1,4 +1,4 @@
-import { board } from '../src/testBoard';
+import { board } from '../src/board';
 let testBoard;
 
 beforeEach(() => {
@@ -30,7 +30,7 @@ test('Was a hit', () => {
 test('Receive Attack (Hit)', () => {
   testBoard.changeDirection();
   testBoard.placeShip(4, [4, 4]);
-  testBoard.receiveAttack([5, 4]);
+  testBoard.receiveAttack([5, 4], true);
   expect(testBoard.gridHits.some(coord => coord[0] === 5 && coord[1] === 4)).toBe(true);
 })
 

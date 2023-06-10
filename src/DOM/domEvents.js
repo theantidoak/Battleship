@@ -25,7 +25,6 @@ export function handleMove(e) {
   const coords = attacker.isAI ? attacker.getAICoords() : e.currentTarget.id.slice(3).split(',').map(Number);
   const inValidCoords = existsInArray(attacker.moves, coords);
   const square = document.getElementById(`${defender.name + '-' + coords}`);
-  
   if (inValidCoords || !game.shipsReady || this.turn || (!attacker.isAI && e.currentTarget.id.slice(0, 2) !== this.name)) return;
   
   attacker.attackEnemy(coords);
@@ -36,7 +35,8 @@ export function handleMove(e) {
   defender.changeTurn();
   attacker.changeTurn();
 
-  game.isGameOver();
+  game.checkSunkShips();
+  game.checkGameOver();
 
   if (defender.isAI) {
     handleMove.call(attacker, e);

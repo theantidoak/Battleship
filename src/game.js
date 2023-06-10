@@ -1,6 +1,6 @@
 import { Player } from "./person";
 
-class Game {
+export class Game {
   constructor() {
     this.player1 = new Player('P1', true, false);
     this.player2 = new Player('P2', false, true);
@@ -13,7 +13,7 @@ class Game {
     this.shipsReady = this.player1.pieces.length + this.player2.pieces.length === 10 ? true : false;
   }
 
-  _recordSunkShips() {
+  checkSunkShips() {
     const p1Ships = Object.entries(this.player1.board.fleet);
     const p2Ships = Object.entries(this.player2.board.fleet);
 
@@ -32,13 +32,14 @@ class Game {
     })
   }
 
-  isGameOver() {
-    this._recordSunkShips(); 
+  checkGameOver() {
     if (this.p1SunkShips.length === 5 || this.p2SunkShips.length === 5) { 
       this.p1SunkShips.length === 5 ? this.player1.board.lost = true : this.player2.board.lost = true;
       const winner = this.player1.board.lost === true ? "Player 2" : "Player 1"
       console.log("Game Over: " + winner + " wins");
+      return "Game Over: " + winner + " wins";
     }
+    return "Game on"
   }
 }
 

@@ -1,6 +1,10 @@
 {
   "name": "battleship",
   "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theantidoak/Battleship.git"
+  },
   "description": "Battleship game - more practice with test from The Odin Project",
   "main": "index.js",
   "scripts": {

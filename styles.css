@@ -126,6 +126,10 @@ button:hover {
   margin-top: 2rem;
 }
 
+.battleship-board.highlighted-board {
+  outline: 8px solid #003a50;
+}
+
 .battleship-square {
   width: clamp(25px, 9vw, 50px);
   height: clamp(25px, 9vw, 50px);
@@ -215,7 +219,7 @@ button:hover {
 
 .scorecard {
   position: absolute;
-  z-index: 3;
+  z-index: 6;
   top: 0;
   bottom: 0;
   left: 0;

@@ -14,6 +14,14 @@ function changeBackgroundColor(square, hit) {
   }
 }
 
+function highlightCurrentBoard() {
+  const p1Board = document.querySelector(`#${this.player1.name}`);
+  const p2Board = document.querySelector(`#${this.player2.name}`);
+
+  p1Board.classList.toggle('highlighted-board');
+  p2Board.classList.toggle('highlighted-board');
+}
+
 function updateScorecard() {
   const p1Scorecard = document.querySelector('.scorecard-P1');
   const p2Scorecard = document.querySelector('.scorecard-P2');
@@ -29,9 +37,6 @@ function updateScorecard() {
   const p2floatingShips = p2Scorecard.querySelector('.floating-ships');
   const p2hits = p2Scorecard.querySelector('.total-hits');
   const p2misses = p2Scorecard.querySelector('.total-misses');
-
-  console.log(p2Scorecard)
-  console.log(p2turn)
 
   p1turn.textContent = this.player1.turn ? 'Yes' : 'No';
   p1sunkShips.textContent = this.player1.sunkShips.length;
@@ -67,8 +72,8 @@ function gameOverScreen(message) {
 
 export function handleMove(e) {
   e.stopPropagation();
-  this.updateShipsReady();
   console.log(this);
+  this.updateShipsReady();
   
   const attacker = !this.player1.turn ? this.player2 : this.player1;
   const defender = !this.player1.turn ? this.player1 : this.player2;
@@ -84,6 +89,8 @@ export function handleMove(e) {
   changeBackgroundColor(square, hit);
   defender.changeTurn();
   attacker.changeTurn();
+
+  highlightCurrentBoard.call(this);
 
   this.checkSunkShips();
   updateScorecard.call(this);

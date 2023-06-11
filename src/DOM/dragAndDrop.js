@@ -38,13 +38,17 @@ export function drop_handler(e) {
     }
   })
   if (!draggable.children) return;
+
   const validDrop = isValidDrop(this, draggable.children.length, coords);
+
   if (validDrop) {
     if (draggable.parentElement.id.slice(3) !== "") {
       this.pieces.splice(this.pieces.indexOf(draggable.id.slice(3)), 1);
       this.board.removeShip(draggable.parentElement.id.slice(3).split(',').map((val) => +val), draggable.children.length);
     }
+
     appendShipToGrid(draggable, target, this);
+
     if (dock.children.length === 7) {
       const hiddenShips = dock.querySelectorAll(".P2");
       const p1Ships = p1Board.querySelectorAll(".ship");
@@ -67,7 +71,13 @@ export function drop_handler(e) {
       });
       const startGame = document.querySelector('.start-game-container');
       startGame.style.display = "block";
+      p2Board.classList.add('highlighted-board');
       startGame.scrollIntoView();
     }
+
+    setTimeout(function () {
+      const startGameBtnContainer = document.querySelector('.start-game-container');
+      startGameBtnContainer.style.display = "none";
+    }, 5000)
   }
 }
